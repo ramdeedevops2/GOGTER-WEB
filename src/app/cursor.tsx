@@ -81,7 +81,13 @@ export function Cursor() {
         node.classList.add("on");
       }
 
-      const target = event.target as HTMLElement | null;
+      /*
+       * Not every pointer event has an element behind it — one dispatched at
+       * the window, or fired as the pointer leaves the document, carries a
+       * target with no closest() on it, and reading through blindly throws on
+       * every move from then on.
+       */
+      const target = event.target instanceof Element ? event.target : null;
 
       // Anything with its own affordance makes the dot swell.
       node.classList.toggle(

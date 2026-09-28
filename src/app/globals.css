@@ -839,11 +839,6 @@ a {
   opacity: 1;
 }
 
-.footer small {
-  color: var(--charcoal);
-  font-size: 13.5px;
-}
-
 /* ─────────────────────────────────────────────────────────
    Reveal on scroll
 

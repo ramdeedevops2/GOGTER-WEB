@@ -77,8 +77,6 @@ function Brand() {
 }
 
 export default function Home() {
-  const year = new Date().getFullYear();
-
   return (
     <>
       <div className="marquee" aria-hidden="true">
@@ -285,7 +283,6 @@ export default function Home() {
             <a href="/terms">Terms of Use</a>
             <a href="/privacy">Privacy Policy</a>
           </nav>
-          <small>© {year} Gogter</small>
         </div>
       </footer>
     </>

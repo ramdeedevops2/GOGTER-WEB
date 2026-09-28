@@ -123,7 +123,6 @@ export function LegalArticle({ content }: { content: LegalContent }) {
             <a href="/terms">Terms of Use</a>
             <a href="/privacy">Privacy Policy</a>
           </nav>
-          <small>© {new Date().getFullYear()} Gogter</small>
         </div>
       </footer>
     </>
