@@ -1,0 +1,1110 @@
+/*
+ * Gogter — the landing page's design system.
+ *
+ * Three references, one page. From Miranda: the broadsheet logic — warm
+ * paper, near-black ink, display type set so large and so tight that the
+ * words stop being sentences and become objects. From Slush: the hand-cut
+ * sticker language — hairline black outlines on everything you can touch,
+ * pill geometry, a shared palette used as confetti rather than as one
+ * careful accent. From MindMarket: the cream canvas instead of white, the
+ * floating pill nav, and radii soft enough that nothing has a corner.
+ *
+ * What is Gogter's own: the red. It is the app's accent, and here it is the
+ * only colour that ever means "do this" — every other colour is decoration.
+ */
+
+:root {
+  /* ── Paper ─────────────────────────────────────────────── */
+  --cream: #f6f1e8;
+  --paper: #ffffff;
+  --sand: #e8e1d4;
+  --band: #1d1b19;
+
+  /* ── Ink ───────────────────────────────────────────────── */
+  --ink: #1d1b19;
+  --charcoal: #6b6560;
+  --hairline: rgba(29, 27, 25, 0.14);
+
+  /* ── The one action colour ─────────────────────────────── */
+  --red: #ee2746;
+  --red-deep: #c81e38;
+
+  /* ── Stickers. A set, never one "the" accent. ──────────── */
+  --mint: #55db9c;
+  --sun: #ffd731;
+  --lavender: #e9ccff;
+  --sky: #a8d5ff;
+
+  /* ── Shape ─────────────────────────────────────────────── */
+  --pill: 999px;
+  --r-card: 36px;
+  --r-tile: 24px;
+  --r-sticker: 18px;
+  --lift: 0 18px 44px rgba(29, 27, 25, 0.1);
+  --lift-sm: 0 8px 22px rgba(29, 27, 25, 0.08);
+
+  /* ── Rhythm ────────────────────────────────────────────── */
+  --gutter: clamp(20px, 5vw, 72px);
+  --section: clamp(88px, 12vw, 180px);
+  --page: 1440px;
+
+  /* ── Motion. One curve, three speeds. ──────────────────── */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 220ms;
+  --mid: 420ms;
+  --slow: 900ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-ui), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Display type
+
+   The crushed leading is the whole point: at 0.82 the lines
+   stack into a block that reads as one shape. Anything above
+   0.9 and it turns back into ordinary typography.
+   ───────────────────────────────────────────────────────── */
+
+.display {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(3.4rem, 11.5vw, 11rem);
+  text-wrap: balance;
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+
+.display-sm {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 6.5vw, 5.2rem);
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.display em {
+  font-style: italic;
+  color: var(--red);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1.5px;
+  background: var(--charcoal);
+}
+
+.lede {
+  max-width: 34ch;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.32rem);
+  line-height: 1.5;
+  color: var(--charcoal);
+}
+
+/* ─────────────────────────────────────────────────────────
+   Controls — everything you can touch is outlined and round
+   ───────────────────────────────────────────────────────── */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 26px;
+  border-radius: var(--pill);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+
+/* The fill sweeps up from the bottom rather than switching colour. */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: translateY(101%);
+  transition: transform var(--mid) var(--ease);
+  z-index: 0;
+}
+
+.btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+.btn:hover {
+  color: var(--cream);
+  transform: translateY(-2px);
+}
+
+.btn:hover::after {
+  transform: translateY(0);
+}
+
+.btn-red {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.btn-red::after {
+  background: var(--red-deep);
+}
+
+.btn-red:hover {
+  color: var(--paper);
+}
+
+.btn-arrow {
+  font-size: 17px;
+  transition: transform var(--fast) var(--ease);
+}
+
+.btn:hover .btn-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ─────────────────────────────────────────────────────────
+   Marquee — the only thing on the page that moves by itself
+   ───────────────────────────────────────────────────────── */
+
+.marquee {
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 11px 0;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 40px;
+  padding-right: 40px;
+  animation: slide 38s linear infinite;
+  will-change: transform;
+}
+
+.marquee span {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Navigation — one floating pill, hairline-drawn
+   ───────────────────────────────────────────────────────── */
+
+.nav-shell {
+  position: sticky;
+  top: 14px;
+  z-index: 60;
+  padding: 14px var(--gutter) 0;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 10px 10px 10px 18px;
+  border-radius: var(--pill);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/*
+ * The logo in the bar: the mark itself, at a size you can actually read it
+ * at, with no disc drawn around it. It beats once as the page arrives and
+ * then stays still — a wordmark that reacts to the cursor is a fidget.
+ */
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 30px;
+  animation: beat-in 1.1s var(--ease) both;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-word {
+  display: inline-block;
+}
+
+@keyframes beat-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-12deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.14) rotate(3deg);
+  }
+  72% {
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  22% {
+    transform: scale(1.18);
+  }
+  40% {
+    transform: scale(0.97);
+  }
+  62% {
+    transform: scale(1.1);
+  }
+}
+
+/* The logo, large, as its own moment on the closing band. */
+.logo-big {
+  width: clamp(90px, 12vw, 148px);
+  height: auto;
+  margin-bottom: 8px;
+  animation: beat 2.6s var(--ease) infinite;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-links a {
+  padding: 10px 16px;
+  border-radius: var(--pill);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+
+.nav-links a:hover {
+  background: var(--cream);
+}
+
+/* ─────────────────────────────────────────────────────────
+   The strip of couples
+   
+   A second marquee, slower than the words and going the other
+   way. Photographs cut out and pinned at angles — the sticker
+   logic applied to people rather than to labels.
+   ───────────────────────────────────────────────────────── */
+
+/*
+ * Two rows passing each other.
+ *
+ * One row of photographs sliding by is a carousel; two going opposite ways
+ * at different speeds reads as a crowd. The edges fade into the paper so the
+ * rows have no visible beginning or end, and both stop under the cursor so
+ * you can actually look at a face.
+ */
+.strip {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(30px, 4vw, 56px) 0;
+  background: var(--cream);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.strip-track {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-right: 18px;
+  width: max-content;
+  animation: slide 64s linear infinite;
+  will-change: transform;
+}
+
+.strip-track.back {
+  animation-duration: 82s;
+  animation-direction: reverse;
+}
+
+.strip figure {
+  flex: none;
+  width: clamp(170px, 19vw, 268px);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--sand);
+  box-shadow: var(--lift-sm);
+  transition: transform var(--mid) var(--ease);
+}
+
+.strip figure:nth-child(3n + 2) {
+  aspect-ratio: 1 / 1;
+}
+
+.strip figure:nth-child(4n + 3) {
+  aspect-ratio: 3 / 4;
+}
+
+.strip figure:hover {
+  transform: scale(1.04);
+}
+
+.strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.strip:hover .strip-track {
+  animation-play-state: paused;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Sections
+   ───────────────────────────────────────────────────────── */
+
+.wrap {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section {
+  padding: var(--section) 0;
+}
+
+.band-white {
+  background: var(--paper);
+}
+
+.band-sand {
+  background: var(--sand);
+}
+
+/* The hero: type on the left, a collage on the right. */
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+  /* Block only: the shorthand would wipe the gutter .wrap sets. */
+  padding-top: clamp(40px, 6vw, 88px);
+  padding-bottom: var(--section);
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/*
+ * The hero headline lives in a column, not across the page, so it takes a
+ * step of its own — the full display size belongs to the ink banner, where
+ * there is a whole page to fill.
+ */
+.hero .display {
+  font-size: clamp(3.2rem, 7.6vw, 8.2rem);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.proof {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--charcoal);
+}
+
+.faces {
+  display: flex;
+}
+
+.faces img,
+.faces span {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--pill);
+  object-fit: cover;
+  background: var(--sun);
+}
+
+.faces > * + * {
+  margin-left: -10px;
+}
+
+.faces span {
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ── The collage ───────────────────────────────────────── */
+
+.collage {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+}
+
+.photo {
+  position: absolute;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--sand);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-a {
+  inset: 0 18% 26% 0;
+  transform: rotate(-3deg);
+}
+
+.photo-b {
+  width: 46%;
+  aspect-ratio: 3 / 4;
+  right: 0;
+  bottom: 4%;
+  transform: rotate(4deg);
+  border-radius: var(--r-tile);
+}
+
+.photo-c {
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  left: -6%;
+  bottom: 6%;
+  transform: rotate(-7deg);
+  border-radius: var(--r-tile);
+}
+
+/* Stickers: cut out, outlined, never aligned to anything. */
+.sticker {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--pill);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sticker-mint {
+  background: var(--mint);
+}
+.sticker-sun {
+  background: var(--sun);
+}
+.sticker-lav {
+  background: var(--lavender);
+}
+.sticker-red {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.sticker-1 {
+  top: 6%;
+  right: 2%;
+  transform: rotate(6deg);
+}
+.sticker-2 {
+  bottom: 30%;
+  left: -4%;
+  transform: rotate(-5deg);
+}
+.sticker-3 {
+  bottom: 2%;
+  left: 12%;
+  transform: rotate(3deg);
+}
+
+/* A slow drift, so the collage breathes without asking for attention. */
+.float {
+  animation: drift 7s ease-in-out infinite;
+}
+.float-slow {
+  animation: drift 10s ease-in-out infinite;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -9px;
+  }
+}
+
+/* ── The ink banner, straight from the broadsheet ──────── */
+
+.banner {
+  overflow: hidden;
+  background: var(--band);
+  color: var(--cream);
+  padding: clamp(40px, 7vw, 96px) 0;
+  text-align: center;
+}
+
+.banner .display {
+  font-size: clamp(4.5rem, 21vw, 22rem);
+  line-height: 0.74;
+  letter-spacing: -0.05em;
+}
+
+.banner p {
+  max-width: 44ch;
+  margin: 26px auto 0;
+  color: rgba(246, 241, 232, 0.72);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+}
+
+/* ── Steps ─────────────────────────────────────────────── */
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 22ch;
+  margin-bottom: clamp(36px, 5vw, 72px);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.6vw, 22px);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(22px, 2.4vw, 34px);
+  border-radius: var(--r-card);
+  background: var(--cream);
+  transition: transform var(--mid) var(--ease), background var(--mid) var(--ease);
+}
+
+.step:hover {
+  transform: translateY(-6px);
+}
+
+.step:nth-child(1):hover {
+  background: var(--sun);
+}
+.step:nth-child(2):hover {
+  background: var(--mint);
+}
+.step:nth-child(3):hover {
+  background: var(--lavender);
+}
+
+.step-no {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--pill);
+  background: var(--paper);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.step h3 {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+.step p {
+  margin: 0;
+  color: var(--charcoal);
+  font-size: 15.5px;
+}
+
+/* ── Feature cards ─────────────────────────────────────── */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.6vw, 22px);
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 14px 22px;
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+
+/* The picture is the card; the words underneath are a label. */
+.feature-photo {
+  aspect-ratio: 4 / 3.4;
+  overflow: hidden;
+  border-radius: calc(var(--r-card) - 14px);
+  background: var(--sand);
+}
+
+.feature-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease);
+}
+
+.feature:hover .feature-photo img {
+  transform: scale(1.05);
+}
+
+.feature h3,
+.feature .tag {
+  margin-left: 8px;
+}
+
+.feature:nth-child(1) {
+  background: var(--sky);
+}
+.feature:nth-child(2) {
+  background: var(--lavender);
+}
+.feature:nth-child(3) {
+  background: var(--mint);
+}
+
+.feature h3 {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.9rem, 3vw, 2.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.feature .tag {
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: var(--pill);
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Closing ───────────────────────────────────────────── */
+
+.closing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  text-align: center;
+  padding: var(--section) 0;
+}
+
+.closing .display {
+  max-width: 14ch;
+}
+
+/* ── Footer ────────────────────────────────────────────── */
+
+.footer {
+  padding: 44px 0;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.footer-links a {
+  padding-bottom: 2px;
+  opacity: 0.75;
+  transition: opacity var(--fast) var(--ease);
+}
+
+.footer-links a:hover {
+  opacity: 1;
+}
+
+.footer small {
+  color: var(--charcoal);
+  font-size: 13.5px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Reveal on scroll
+
+   Set by a class rather than an inline style so the page is
+   readable with JavaScript off: nothing is hidden until the
+   script says it is watching.
+   ───────────────────────────────────────────────────────── */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease);
+  transition-delay: var(--delay, 0ms);
+}
+
+.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   The cursor
+   
+   One black dot, drawn only where there is a real pointer —
+   the class is added by script, so a phone and a keyboard
+   user keep the browser's own behaviour.
+   ───────────────────────────────────────────────────────── */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--pill);
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms var(--ease), width 260ms var(--ease),
+    height 260ms var(--ease), background 260ms var(--ease);
+}
+
+.cursor.on {
+  opacity: 1;
+}
+
+/* Over anything clickable it swells and thins out, so the thing underneath
+   stays readable through it. */
+.cursor.over {
+  width: 46px;
+  height: 46px;
+  background: rgba(29, 27, 25, 0.22);
+}
+
+.cursor.down {
+  width: 10px;
+  height: 10px;
+}
+
+/* Cream on the ink bands, so it never disappears into them. */
+.cursor.invert {
+  background: var(--cream);
+}
+
+.cursor.invert.over {
+  background: rgba(246, 241, 232, 0.28);
+}
+
+.has-cursor,
+.has-cursor a,
+.has-cursor button,
+.has-cursor input,
+.has-cursor [role="button"] {
+  cursor: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   The opening
+   
+   The app's own splash film on the same cream, sitting over
+   the page until it is done or until you do anything at all.
+   ───────────────────────────────────────────────────────── */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--cream);
+  transition: opacity 600ms var(--ease);
+}
+
+.intro.out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-film {
+  width: min(78vw, 460px);
+  height: auto;
+  border-radius: 22px;
+  animation: intro-rise 900ms var(--ease) both;
+}
+
+.intro.out .intro-film {
+  transition: transform 600ms var(--ease);
+  transform: scale(1.06);
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Legal pages — a document, set to be read
+   
+   Centred title, a dated pill, one narrow column. The page
+   is long and nobody wants to be here; the least it can do
+   is be quiet and easy on the eye.
+   ───────────────────────────────────────────────────────── */
+
+.legal {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 104px) var(--gutter) var(--section);
+}
+
+.legal-head {
+  text-align: center;
+  margin-bottom: clamp(36px, 5vw, 72px);
+}
+
+.legal-head .display-sm {
+  margin-top: 18px;
+}
+
+/* The date as a pill rather than a line of small print. */
+.legal-meta {
+  display: inline-block;
+  margin: 22px 0 0;
+  padding: 8px 16px;
+  border-radius: var(--pill);
+  background: var(--paper);
+  box-shadow: var(--lift-sm);
+  color: var(--charcoal);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* A rule the eye can rest on between sections. */
+.legal-body h2 {
+  padding-top: 26px;
+  border-top: 1px solid rgba(29, 27, 25, 0.1);
+}
+
+.legal-body h2:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.legal-body h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  margin: 48px 0 14px;
+}
+
+.legal-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 32px 0 10px;
+}
+
+.legal-body p,
+.legal-body li {
+  color: #3a3531;
+  font-size: 17.5px;
+  line-height: 1.75;
+}
+
+.legal-body ul,
+.legal-body ol {
+  padding-left: 22px;
+}
+
+.legal-body li {
+  margin: 8px 0;
+}
+
+.legal-body a {
+  color: var(--red-deep);
+}
+
+.legal-body strong {
+  font-weight: 700;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Small screens — the collage stacks, the type stays huge
+   ───────────────────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero .display {
+    font-size: clamp(3.2rem, 12vw, 6rem);
+  }
+
+  .collage {
+    aspect-ratio: 1 / 0.9;
+  }
+
+  .steps,
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .sticker {
+    font-size: 11.5px;
+    padding: 8px 12px;
+  }
+
+  .feature {
+    min-height: 0;
+  }
+}
+
+/* One switch turns every bit of motion off. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee-track,
+  .float,
+  .float-slow {
+    animation: none;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
