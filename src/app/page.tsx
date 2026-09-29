@@ -1,6 +1,8 @@
 import { Runway } from "./runway";
 import { VideoBackdrop } from "./videoBackdrop";
 
+const MEDIA_BUCKET = process.env.NEXT_PUBLIC_SITE_MEDIA_BUCKET ?? "gogter-site-media";
+
 const clips = {
   // Pexels 8575032: a couple walking through a city plaza at sunset.
   hero: {
@@ -21,6 +23,44 @@ const clips = {
   },
 };
 
+type LandingAsset = {
+  path: string;
+  name: string;
+  kind: "image" | "video";
+  contentType: string;
+  altText: string;
+};
+
+type LandingManifest = {
+  assets: LandingAsset[];
+  slots: Record<string, string | undefined>;
+};
+
+async function loadLandingMedia(): Promise<LandingManifest | null> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  if (!supabaseUrl) return null;
+
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/site-media.json`,
+      { next: { revalidate: 30 } },
+    );
+    if (!response.ok) return null;
+
+    return (await response.json()) as LandingManifest;
+  } catch {
+    return null;
+  }
+}
+
+function mediaUrl(asset: LandingAsset | undefined, fallback: string) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  if (!asset || !supabaseUrl) return fallback;
+
+  const path = asset.path.split("/").map(encodeURIComponent).join("/");
+  return `${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
+}
+
 function Brand() {
   return (
     <span className="brand">
@@ -30,7 +70,13 @@ function Brand() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const manifest = await loadLandingMedia();
+  const assigned = (slot: string) => {
+    const path = manifest?.slots?.[slot];
+    return path ? manifest?.assets?.find((asset) => asset.path === path) : undefined;
+  };
+
   return (
     <main className="gogter-film">
       <header className="film-nav">
@@ -39,11 +85,22 @@ export default function Home() {
       </header>
 
       <section className="film-hero">
-        <VideoBackdrop src={clips.hero.src} poster={clips.hero.poster} />
+        <VideoBackdrop
+          src={mediaUrl(assigned("hero_video"), clips.hero.src)}
+          poster={mediaUrl(assigned("hero_photo_main"), clips.hero.poster)}
+        />
         <div className="hero-image-wash" />
         <div className="hero-image-stack" aria-hidden="true">
-          <img className="hero-photo hero-photo-main" src={clips.place.image} alt="" />
-          <img className="hero-photo hero-photo-side" src={clips.hello.image} alt="" />
+          <img
+            className="hero-photo hero-photo-main"
+            src={mediaUrl(assigned("hero_photo_main"), clips.place.image)}
+            alt=""
+          />
+          <img
+            className="hero-photo hero-photo-side"
+            src={mediaUrl(assigned("hero_photo_side"), clips.hello.image)}
+            alt=""
+          />
         </div>
         <div className="hero-copy">
           <h1 className="film-title reveal">
@@ -56,9 +113,9 @@ export default function Home() {
       <Runway
         id="story"
         slides={[
-          { image: clips.place.image, title: "A PLACE" },
-          { image: clips.hello.image, title: "A HELLO" },
-          { image: clips.together.image, title: "TOGETHER" },
+          { image: mediaUrl(assigned("story_place"), clips.place.image), title: "A PLACE" },
+          { image: mediaUrl(assigned("story_hello"), clips.hello.image), title: "A HELLO" },
+          { image: mediaUrl(assigned("story_together"), clips.together.image), title: "TOGETHER" },
         ]}
       />
 
@@ -67,10 +124,13 @@ export default function Home() {
       </section>
 
       <section className="photo-finale" id="get">
-        <img className="finale-image" src={clips.hero.poster} alt="A couple walking together in the city at sunset" />
+        <img
+          className="finale-image"
+          src={mediaUrl(assigned("finale_image"), clips.hero.poster)}
+          alt={assigned("finale_image")?.altText ?? "A couple walking together in the city at sunset"}
+        />
         <div className="finale-copy">
           <h2>OUT<br /><em>THERE.</em></h2>
-          <a className="final-cta" href="mailto:hello@gogter.com">CONTACT GOGTER</a>
         </div>
       </section>
 

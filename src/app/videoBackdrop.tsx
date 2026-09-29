@@ -54,12 +54,12 @@ export function VideoBackdrop({ src, poster, className = "" }: VideoBackdropProp
       muted
       loop
       playsInline
-      preload="none"
+      preload="auto"
       poster={poster}
       aria-hidden="true"
       tabIndex={-1}
     >
-      <source src={src} type="video/mp4" />
+      <source src={src} />
     </video>
   );
 }

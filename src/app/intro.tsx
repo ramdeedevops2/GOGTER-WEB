@@ -21,11 +21,77 @@ import { useEffect, useRef, useState } from "react";
 
 const SEEN = "gogter:intro";
 const MAX_MS = 2600;
+const MEDIA_BUCKET = process.env.NEXT_PUBLIC_SITE_MEDIA_BUCKET ?? "gogter-site-media";
+const INTRO_MEDIA_CACHE = "gogter:intro-video:v1";
+
+type IntroManifest = {
+  assets?: { path: string; kind: "image" | "video" }[];
+  slots?: Record<string, string | undefined>;
+};
+
+function cachedIntroSource() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  if (typeof window === "undefined" || !supabaseUrl) return "/logo-animation.mp4";
+
+  try {
+    const path = window.localStorage.getItem(INTRO_MEDIA_CACHE);
+    if (path && /^assets\/[a-z0-9_-]+\.(mp4|webm)$/i.test(path)) {
+      return `${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
+    }
+  } catch {
+    // Storage can be disabled in private browsing; the public file remains a fallback.
+  }
+
+  return "/logo-animation.mp4";
+}
 
 export function Intro() {
   const [showing, setShowing] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [introSrc, setIntroSrc] = useState(cachedIntroSource);
   const video = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+    if (!supabaseUrl) return;
+
+    let alive = true;
+    void fetch(`${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/site-media.json`, {
+      cache: "no-store",
+    })
+      .then((response) => (response.ok ? response.json() as Promise<IntroManifest> : null))
+      .then((manifest) => {
+        const path = manifest?.slots?.logo_intro_video;
+        if (!alive) return;
+        const assignedVideo =
+          path &&
+          /^assets\/[a-z0-9_-]+\.(mp4|webm)$/i.test(path) &&
+          manifest?.assets?.some((asset) => asset.path === path && asset.kind === "video");
+
+        if (!assignedVideo) {
+          try {
+            window.localStorage.removeItem(INTRO_MEDIA_CACHE);
+          } catch {
+            /* The uncached public file remains available. */
+          }
+          setIntroSrc("/logo-animation.mp4");
+          return;
+        }
+
+        const publicPath = path.split("/").map(encodeURIComponent).join("/");
+        try {
+          window.localStorage.setItem(INTRO_MEDIA_CACHE, path);
+        } catch {
+          /* The browser's HTTP media cache still keeps the video locally. */
+        }
+        setIntroSrc(`${supabaseUrl}/storage/v1/object/public/${MEDIA_BUCKET}/${publicPath}`);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     let seen = true;
@@ -82,7 +148,7 @@ export function Intro() {
     // Autoplay is only allowed muted; a refusal is not worth handling
     // beyond letting the timer carry on.
     video.current?.play().catch(() => undefined);
-  }, [showing]);
+  }, [introSrc, showing]);
 
   if (!showing) return null;
 
@@ -91,7 +157,7 @@ export function Intro() {
       <video
         ref={video}
         className="intro-film"
-        src="/logo-animation.mp4"
+        src={introSrc}
         muted
         playsInline
         preload="auto"
