@@ -23,5 +23,5 @@ export const revalidate = 3600;
 
 export default async function TermsPage() {
   const content = await loadLegalPage("terms");
-  return <LegalArticle content={content} />;
+  return <LegalArticle content={content} slug="terms" />;
 }

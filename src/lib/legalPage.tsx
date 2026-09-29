@@ -1,4 +1,4 @@
-import { renderLegalMarkdown } from "./legalMarkdown";
+import { getLegalHeadings, renderLegalMarkdown } from "./legalMarkdown";
 
 /**
  * Loading and rendering a public legal page.
@@ -79,8 +79,8 @@ export async function loadLegalPage(slug: LegalSlug): Promise<LegalContent> {
   }
 }
 
-/** The document itself, on the same paper as the rest of the site. */
-export function LegalArticle({ content }: { content: LegalContent }) {
+/** Public legal document with a readable index and brand-matched dark shell. */
+export function LegalArticle({ content, slug }: { content: LegalContent; slug: LegalSlug }) {
   const effective = content.effectiveOn
     ? new Date(content.effectiveOn).toLocaleDateString("en-GB", {
         day: "numeric",
@@ -89,41 +89,58 @@ export function LegalArticle({ content }: { content: LegalContent }) {
       })
     : null;
 
+  const headings = getLegalHeadings(content.body, content.title);
+  const documentNumber = slug === "terms" ? "01" : "02";
+
   return (
     <>
-      <header className="nav-shell">
-        <nav className="nav" aria-label="Main">
-          <a className="brand" href="/" aria-label="Gogter home">
-            <span className="brand-mark">
-              <img src="/gogter.png" alt="" />
-            </span>
-            <span className="brand-word">gogter</span>
-          </a>
-          <a className="btn" href="/">
-            <span>Back to the site</span>
-          </a>
-        </nav>
+      <header className="legal-nav">
+        <a className="legal-brand" href="/" aria-label="Gogter home">
+          <img src="/gogter.png" alt="" />
+          <span>Gogter</span>
+        </a>
+        <div className="legal-nav-right">
+          <span>LEGAL / {documentNumber}</span>
+          <a href="/">BACK TO GOGTER <span aria-hidden="true">↗</span></a>
+        </div>
       </header>
 
-      <main className="legal">
-        <div className="legal-head">
-          <p className="eyebrow">Gogter</p>
-          <h1 className="display-sm" style={{ marginTop: 16 }}>
-            {content.title}
-          </h1>
-          {effective && <p className="legal-meta">In effect from {effective}</p>}
-        </div>
+      <main className={`legal-page legal-${slug}`} id="top">
+        <header className="legal-head">
+          <p className="legal-kicker"><span>GOGTER / LEGAL</span><span>DOCUMENT {documentNumber}</span></p>
+          <h1>{content.title}</h1>
+          {effective && <p className="legal-meta">EFFECTIVE {effective}</p>}
+        </header>
 
-        <article className="legal-body">{renderLegalMarkdown(content.body)}</article>
+        <div className={`legal-document-grid${headings.length ? " has-toc" : ""}`}>
+          {headings.length > 0 && (
+            <aside className="legal-toc" aria-label="Table of contents">
+              <p>IN THIS DOCUMENT</p>
+              <nav>
+                {headings.map((heading, index) => (
+                  <a className={heading.level === 3 ? "nested" : ""} href={`#${heading.id}`} key={heading.id}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    {heading.title}
+                  </a>
+                ))}
+              </nav>
+            </aside>
+          )}
+
+          <article className="legal-body">{renderLegalMarkdown(content.body)}</article>
+        </div>
       </main>
 
-      <footer className="footer">
-        <div className="wrap footer-inner">
-          <nav className="footer-links" aria-label="Legal">
-            <a href="/terms">Terms of Use</a>
-            <a href="/privacy">Privacy Policy</a>
-          </nav>
-        </div>
+      <footer className="legal-footer">
+        <a className="legal-brand" href="/" aria-label="Gogter home">
+          <img src="/gogter.png" alt="" />
+          <span>Gogter</span>
+        </a>
+        <nav aria-label="Legal documents">
+          <a className={slug === "terms" ? "active" : ""} href="/terms">TERMS OF USE</a>
+          <a className={slug === "privacy" ? "active" : ""} href="/privacy">PRIVACY POLICY</a>
+        </nav>
+        <a className="legal-back-top" href="#top">BACK TO TOP ↑</a>
       </footer>
     </>
   );

@@ -16,5 +16,5 @@ export const revalidate = 3600;
 
 export default async function PrivacyPage() {
   const content = await loadLegalPage("privacy");
-  return <LegalArticle content={content} />;
+  return <LegalArticle content={content} slug="privacy" />;
 }

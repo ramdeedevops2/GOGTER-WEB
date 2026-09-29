@@ -92,10 +92,55 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   return nodes;
 }
 
+export type LegalHeading = { id: string; title: string; level: 2 | 3 };
+
+function plainHeading(markdown: string) {
+  return markdown
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .trim();
+}
+
+function slugHeading(title: string) {
+  const slug = title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return slug || "section";
+}
+
+export function getLegalHeadings(body: string, documentTitle?: string): LegalHeading[] {
+  const occurrences = new Map<string, number>();
+  const headings: LegalHeading[] = [];
+
+  for (const line of body.replace(/\r\n/g, "\n").split("\n")) {
+    const match = /^(#{1,3})\s+(.+)$/.exec(line.trim());
+    if (!match) continue;
+
+    const title = plainHeading(match[2]);
+    const base = slugHeading(title);
+    const occurrence = occurrences.get(base) ?? 0;
+    occurrences.set(base, occurrence + 1);
+
+    if (documentTitle && title.localeCompare(documentTitle, undefined, { sensitivity: "accent" }) === 0) continue;
+
+    headings.push({
+      id: occurrence === 0 ? base : `${base}-${occurrence + 1}`,
+      title,
+      level: match[1].length === 3 ? 3 : 2,
+    });
+  }
+
+  return headings;
+}
+
 export function renderLegalMarkdown(body: string): React.ReactNode[] {
   // A document pasted from Windows carries \r, which would otherwise survive
   // into every rendered line.
   const lines = body.replace(/\r\n/g, "\n").split("\n");
+  const headings = getLegalHeadings(body);
   const out: React.ReactNode[] = [];
 
   /*
@@ -106,6 +151,7 @@ export function renderLegalMarkdown(body: string): React.ReactNode[] {
   let bullets: string[] = [];
   let numbers: string[] = [];
   let key = 0;
+  let headingIndex = 0;
 
   const flushBullets = () => {
     if (bullets.length === 0) return;
@@ -146,19 +192,22 @@ export function renderLegalMarkdown(body: string): React.ReactNode[] {
 
     if (line.startsWith("### ")) {
       flushAll();
-      out.push(<h3 key={key++}>{renderInline(line.slice(4), `h3${key}`)}</h3>);
+      const heading = headings[headingIndex++];
+      out.push(<h3 id={heading?.id} key={key++}>{renderInline(line.slice(4), `h3${key}`)}</h3>);
       continue;
     }
 
     if (line.startsWith("## ")) {
       flushAll();
-      out.push(<h2 key={key++}>{renderInline(line.slice(3), `h2${key}`)}</h2>);
+      const heading = headings[headingIndex++];
+      out.push(<h2 id={heading?.id} key={key++}>{renderInline(line.slice(3), `h2${key}`)}</h2>);
       continue;
     }
 
     if (line.startsWith("# ")) {
       flushAll();
-      out.push(<h2 key={key++}>{renderInline(line.slice(2), `h1${key}`)}</h2>);
+      const heading = headings[headingIndex++];
+      out.push(<h2 id={heading?.id} key={key++}>{renderInline(line.slice(2), `h1${key}`)}</h2>);
       continue;
     }
 

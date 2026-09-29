@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
-import { Cursor } from "./cursor";
 import { Intro } from "./intro";
 import { Reveal } from "./reveal";
 import "./globals.css";
@@ -29,20 +28,17 @@ const ui = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Gogter — Real people, right around you.",
-  description:
-    "Leave a heart at a place you love. Meet the person who picks it up. Gogter is for the people already near you.",
+  title: "Gogter",
   applicationName: "Gogter",
   icons: { icon: "/gogter.png", apple: "/gogter.png" },
   openGraph: {
-    title: "Gogter — Real people, right around you.",
-    description: "Good chemistry has a way of showing up close to home.",
+    title: "Gogter",
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f1e8",
+  themeColor: "#050505",
   width: "device-width",
   initialScale: 1,
 };
@@ -55,7 +51,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             on a page whose script never ran. */}
         <Reveal />
         <Intro />
-        <Cursor />
         {children}
       </body>
     </html>
