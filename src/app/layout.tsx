@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
-import { Intro } from "./intro";
 import { Reveal } from "./reveal";
 import "./globals.css";
 
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Adds the class the reveal styles hang off, so nothing is hidden
             on a page whose script never ran. */}
         <Reveal />
-        <Intro />
         {children}
       </body>
     </html>

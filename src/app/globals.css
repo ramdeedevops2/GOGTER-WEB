@@ -916,50 +916,6 @@ a {
   cursor: none;
 }
 
-/* ─────────────────────────────────────────────────────────
-   The opening
-   
-   The app's own splash film on the same cream, sitting over
-   the page until it is done or until you do anything at all.
-   ───────────────────────────────────────────────────────── */
-
-.intro {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  background: var(--cream);
-  transition: opacity 600ms var(--ease);
-}
-
-.intro.out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.intro-film {
-  width: min(78vw, 460px);
-  height: auto;
-  border-radius: 22px;
-  animation: intro-rise 900ms var(--ease) both;
-}
-
-.intro.out .intro-film {
-  transition: transform 600ms var(--ease);
-  transform: scale(1.06);
-}
-
-@keyframes intro-rise {
-  from {
-    opacity: 0;
-    transform: scale(0.82);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
 /* ─────────────────────────────────────────────────────────
    Legal pages — a document, set to be read
@@ -1060,9 +1016,6 @@ a {
   font-family: var(--font-ui), Arial, sans-serif;
 }
 
-.intro { background: #050505; }
-.intro-film { border-radius: 0; }
-
 .film-nav,
 .film-footer {
   position: absolute;
@@ -1155,27 +1108,135 @@ a {
 .film-footer nav { display: flex; gap: 20px; font-size: 9px; }
 .film-footer nav a:hover { color: var(--film-red); }
 
+/* ─────────────────────────────────────────────────────────
+   The runway, on anything that is not a desktop pointer
+
+   On a desktop the three slides are pinned and driven sideways by the
+   scroll. That trick needs a mouse wheel and a tall page; on a touch
+   screen it fights the finger, and a tablet at 900px was getting the
+   desktop version because the only breakpoint stopped at 760.
+
+   So: a plain horizontal track that you swipe, with snap points. The
+   comma is an OR — narrow screens and touch devices, whichever applies.
+   ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1180px), (hover: none) {
+  .runway { height: auto; }
+  .runway-pin { position: relative; height: auto; overflow: visible; }
+  .runway-track {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* The pinning script writes a transform; it must not survive here. */
+    transform: none !important;
+  }
+  .runway-track::-webkit-scrollbar { display: none; }
+  .runway-slide { scroll-snap-align: center; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Medium screens — tablets, and a narrow desktop window
+
+   Nothing between 761px and the full desktop layout had any rules at
+   all, so a tablet rendered the desktop composition at half the width:
+   the title ran flush into the right edge, and the side photo with it.
+   These keep the design and give it room.
+   ───────────────────────────────────────────────────────── */
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .film-hero { min-height: 720px; }
+
+  /*
+   * A deeper wash under the title.
+   *
+   * The desktop gradient fades out by 34% of the height, which is fine
+   * across a wide frame where the title sits low and left over dark
+   * ground. At tablet proportions the same title lands over a bright
+   * part of the footage and the near-white type all but disappeared.
+   */
+  .hero-image-wash {
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.34) 55%, rgba(0,0,0,.06) 100%),
+      linear-gradient(0deg, rgba(0,0,0,.8), transparent 56%);
+  }
+
+  /* Both edges, not just the left — the desktop rule sets a width that
+     happens to reach the right edge exactly at this size. */
+  .hero-copy {
+    inset: auto clamp(28px, 5vw, 64px) 14% clamp(28px, 5vw, 64px);
+    width: auto;
+  }
+  .film-title { font-size: clamp(3.8rem, 9.2vw, 7.6rem); }
+
+  .hero-photo-main { top: 12%; right: 24%; width: 34vw; height: 52vh; }
+  .hero-photo-side { top: 8%; right: 6%; width: 27vw; height: 33vh; }
+
+  .runway-slide { flex-basis: 78vw; width: 78vw; height: 70svh; min-height: 540px; }
+  .slide-copy { right: clamp(24px, 5vw, 56px); bottom: 56px; left: clamp(24px, 5vw, 56px); }
+  .slide-copy h2 { font-size: clamp(3.6rem, 10vw, 7rem); }
+
+  .poster-break { min-height: 62svh; }
+  .poster-word { font-size: clamp(3.8rem, 10.5vw, 8rem); }
+  .photo-finale { min-height: 72svh; }
+  .finale-copy h2 { font-size: clamp(3.6rem, 10vw, 7rem); }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Small screens
+   ───────────────────────────────────────────────────────── */
+
 @media (max-width: 760px) {
   .film-nav { min-height: 68px; }
-  .film-hero { min-height: 760px; height: 100svh; max-height: 940px; }
+  .film-hero { min-height: 620px; height: 100svh; max-height: 940px; }
   .hero-image-wash { background: linear-gradient(90deg, rgba(0,0,0,.65), rgba(0,0,0,.08)), linear-gradient(0deg, rgba(0,0,0,.72), transparent 65%); }
   .hero-image-stack { inset: 3% 0 auto; height: 75%; }
-  .hero-photo-main { top: 5%; right: 8%; width: 47vw; height: 53vh; transform: rotate(-5deg); }
-  .hero-photo-side { top: 0; right: 47%; width: 35vw; height: 36vh; transform: rotate(6deg); }
-  .hero-copy { bottom: 24%; left: 5vw; width: 94vw; }
-  .film-title { font-size: clamp(3.1rem, 12.5vw, 5.5rem); }
-  .runway { height: auto !important; }
-  .runway-pin { position: relative; height: auto; overflow: visible; }
-  .runway-track { width: 100%; height: auto; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; transform: none !important; }
-  .runway-track::-webkit-scrollbar { display: none; }
-  .runway-slide { flex-basis: 88vw; width: 88vw; height: 78svh; min-height: 560px; scroll-snap-align: center; }
-  .slide-copy { right: 24px; bottom: 54px; left: 24px; }
-  .slide-copy h2 { font-size: clamp(4rem, 17vw, 8rem); }
-  .poster-break { min-height: 64svh; padding: 30px 22px; }
-  .poster-word { font-size: clamp(3.8rem, 15vw, 7rem); }
-  .photo-finale { min-height: 78svh; padding: 34px 23px; }
-  .finale-copy h2 { font-size: clamp(3.6rem, 14vw, 7rem); }
-  .film-footer { min-height: 130px; flex-wrap: wrap; gap: 12px; padding-block: 22px; }
+
+  /*
+   * The two photos were touching exactly — the side one ended at 47% and
+   * the main one began there — so they read as a single torn shape. A few
+   * vw between them, and both kept clear of the right edge.
+   */
+  .hero-photo-main { top: 6%; right: 6%; width: 42vw; height: 46vh; transform: rotate(-5deg); }
+  .hero-photo-side { top: 2%; right: 60%; width: 30vw; height: 33vh; transform: rotate(6deg); }
+
+  /*
+   * Matched gutters, and type that fits inside them.
+   *
+   * The desktop rule is one inset plus a 91vw width, which at 375px left
+   * 19px on the left and 4px on the right — "CONNECTIONS." all but touched
+   * the edge. Both sides now come from the same value the nav uses, so the
+   * title lines up with the wordmark above it.
+   */
+  .hero-copy {
+    inset: auto clamp(20px, 5.5vw, 34px) 16% clamp(20px, 5.5vw, 34px);
+    width: auto;
+  }
+  .film-title { font-size: clamp(2.5rem, 11.4vw, 4.4rem); }
+  .film-title span { margin-left: .16em; }
+
+  .runway-slide { flex-basis: 88vw; width: 88vw; height: 74svh; min-height: 520px; }
+  .slide-copy { right: 24px; bottom: 48px; left: 24px; }
+  .slide-copy h2 { font-size: clamp(2.8rem, 14vw, 6rem); }
+
+  .poster-break { min-height: 58svh; padding: 30px 22px; }
+  .poster-word { font-size: clamp(2.9rem, 14vw, 6rem); }
+
+  .photo-finale { min-height: 68svh; padding: 34px 23px; }
+  .finale-copy h2 { font-size: clamp(2.8rem, 13.5vw, 6rem); }
+
+  .film-footer { min-height: 110px; flex-wrap: wrap; gap: 12px; padding-block: 20px; }
+}
+
+/* Phones narrower than an iPhone SE, where the long word is the constraint. */
+@media (max-width: 400px) {
+  .film-title { font-size: clamp(2.2rem, 10.8vw, 3.4rem); }
+  .hero-copy { bottom: 14%; }
+  .hero-photo-main { height: 42vh; }
+  .hero-photo-side { height: 30vh; }
+  .brand img { width: 25px; height: 25px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
