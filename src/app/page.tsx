@@ -1,4 +1,5 @@
 import { Runway } from "./runway";
+import { StoreLinks } from "./storeLinks";
 import { VideoBackdrop } from "./videoBackdrop";
 
 const MEDIA_BUCKET = process.env.NEXT_PUBLIC_SITE_MEDIA_BUCKET ?? "gogter-site-media";
@@ -34,6 +35,10 @@ type LandingAsset = {
 type LandingManifest = {
   assets: LandingAsset[];
   slots: Record<string, string | undefined>;
+  storeLinks?: {
+    appStoreUrl?: string;
+    googlePlayUrl?: string;
+  };
 };
 
 async function loadLandingMedia(): Promise<LandingManifest | null> {
@@ -81,7 +86,7 @@ export default async function Home() {
     <main className="gogter-film">
       <header className="film-nav">
         <Brand />
-        <a className="nav-cta" href="#get">GET THE APP</a>
+        <a className="nav-cta" href="#footer">GET THE APP</a>
       </header>
 
       <section className="film-hero">
@@ -107,34 +112,46 @@ export default async function Home() {
             REAL-LIFE<br />
             <span>CONNECTIONS.</span>
           </h1>
+          <p className="mobile-hero-support">
+            Real people, real places. Say hello to someone nearby.
+          </p>
+          <a className="mobile-hero-cta" href="#story">
+            Find your kind of connection <span aria-hidden="true">↓</span>
+          </a>
         </div>
       </section>
 
-      <Runway
-        id="story"
-        slides={[
-          { image: mediaUrl(assigned("story_place"), clips.place.image), title: "A PLACE" },
-          { image: mediaUrl(assigned("story_hello"), clips.hello.image), title: "A HELLO" },
-          { image: mediaUrl(assigned("story_together"), clips.together.image), title: "TOGETHER" },
-        ]}
-      />
-
-      <section className="poster-break" data-dark>
-        <p className="poster-word">LOOK<br /><span>UP.</span></p>
-      </section>
-
-      <section className="photo-finale" id="get">
-        <img
-          className="finale-image"
-          src={mediaUrl(assigned("finale_image"), clips.hero.poster)}
-          alt={assigned("finale_image")?.altText ?? "A couple walking together in the city at sunset"}
+      <div className="mobile-stack">
+        <Runway
+          id="story"
+          slides={[
+            { image: mediaUrl(assigned("story_place"), clips.place.image), title: "A PLACE" },
+            { image: mediaUrl(assigned("story_hello"), clips.hello.image), title: "A HELLO" },
+            { image: mediaUrl(assigned("story_together"), clips.together.image), title: "TOGETHER" },
+          ]}
         />
-        <div className="finale-copy">
-          <h2>OUT<br /><em>THERE.</em></h2>
-        </div>
-      </section>
 
-      <footer className="film-footer">
+        <section className="poster-break" data-dark>
+          <p className="poster-word">LOOK<br /><span>UP.</span></p>
+        </section>
+
+        <section className="photo-finale" id="get">
+          <img
+            className="finale-image"
+            src={mediaUrl(assigned("finale_image"), clips.hero.poster)}
+            alt={assigned("finale_image")?.altText ?? "A couple walking together in the city at sunset"}
+          />
+          <div className="finale-copy">
+            <h2>OUT<br /><em>THERE.</em></h2>
+          </div>
+        </section>
+      </div>
+
+      <footer className="film-footer" id="footer">
+        <StoreLinks
+          appStoreUrl={manifest?.storeLinks?.appStoreUrl}
+          googlePlayUrl={manifest?.storeLinks?.googlePlayUrl}
+        />
         <nav aria-label="Legal"><a href="/terms">TERMS</a><a href="/privacy">PRIVACY</a></nav>
       </footer>
     </main>

@@ -14,13 +14,16 @@ export function Runway({ id, slides }: { id: string; slides: Slide[] }) {
     if (!root || !rail) return;
 
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // Keep the script in step with the CSS: touch devices and screens up to
+    // tablet width use a native horizontal scroller instead of the pinned rail.
+    const swipeLayout = window.matchMedia("(max-width: 1180px), (hover: none)");
     let frame = 0;
     let distance = 0;
 
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        if (motion.matches || window.innerWidth <= 760) return;
+        if (motion.matches || swipeLayout.matches) return;
         const bounds = root.getBoundingClientRect();
         const progress = Math.max(
           0,
@@ -37,7 +40,7 @@ export function Runway({ id, slides }: { id: string; slides: Slide[] }) {
     };
 
     const changeMotion = () => {
-      if (motion.matches || window.innerWidth <= 760) {
+      if (motion.matches || swipeLayout.matches) {
         root.style.height = "auto";
         rail.style.transform = "none";
       } else {
@@ -49,12 +52,14 @@ export function Runway({ id, slides }: { id: string; slides: Slide[] }) {
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", changeMotion, { passive: true });
     motion.addEventListener("change", changeMotion);
+    swipeLayout.addEventListener("change", changeMotion);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", changeMotion);
       motion.removeEventListener("change", changeMotion);
+      swipeLayout.removeEventListener("change", changeMotion);
     };
   }, []);
 
@@ -62,10 +67,21 @@ export function Runway({ id, slides }: { id: string; slides: Slide[] }) {
     <section className="runway" id={id} ref={section} aria-label="Gogter connections">
       <div className="runway-pin">
         <div className="runway-track" ref={track}>
-          {slides.map((slide) => (
+          {slides.map((slide, index) => (
             <article className="runway-slide" key={slide.title}>
               <img className="runway-image" src={slide.image} alt="" />
               <div className="slide-shade" />
+              <div className="mobile-slide-meta" aria-hidden="true">
+                <div className="mobile-story-progress">
+                  {slides.map((step, stepIndex) => (
+                    <span
+                      className={stepIndex <= index ? "is-active" : undefined}
+                      key={step.title}
+                    />
+                  ))}
+                </div>
+                <span className="mobile-story-count">0{index + 1} <i>/ 0{slides.length}</i></span>
+              </div>
               <div className="slide-copy">
                 <h2>{slide.title}</h2>
               </div>
