@@ -34,12 +34,19 @@ export const metadata: Metadata = {
    *
    * This pointed at /gogter.png, which is 954x480 — the wide G-and-heart
    * lockup. Every favicon slot is square, so the browser squashed a 2:1
-   * image into 1:1 and the mark came out visibly stretched. These are the
-   * same artwork on a square canvas, at the sizes that actually get used:
-   * 32 for the tab, 192 and 512 for an installed shortcut, 180 for iOS.
+   * image into 1:1 and the mark came out visibly stretched.
+   *
+   * Padding it into a square was not enough either: the mark is 2:1, so
+   * it filled barely 40% of the height and sat in a pale band that read
+   * as a short, flat logo rather than an icon. So the tile carries the
+   * shape instead — solid brand red, rounded like every other icon on a
+   * tab strip, with the mark in white across the middle. The tile fills
+   * the slot, which is what stops it looking short, and white on red
+   * holds up at 16px where the red-on-cream version muddied.
    */
   icons: {
     icon: [
+      { url: "/icon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/icon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
