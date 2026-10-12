@@ -29,7 +29,23 @@ const ui = Inter({
 export const metadata: Metadata = {
   title: "Gogter",
   applicationName: "Gogter",
-  icons: { icon: "/gogter.png", apple: "/gogter.png" },
+  /*
+   * Square icons, not the wordmark.
+   *
+   * This pointed at /gogter.png, which is 954x480 — the wide G-and-heart
+   * lockup. Every favicon slot is square, so the browser squashed a 2:1
+   * image into 1:1 and the mark came out visibly stretched. These are the
+   * same artwork on a square canvas, at the sizes that actually get used:
+   * 32 for the tab, 192 and 512 for an installed shortcut, 180 for iOS.
+   */
+  icons: {
+    icon: [
+      { url: "/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+  },
   openGraph: {
     title: "Gogter",
     type: "website",
