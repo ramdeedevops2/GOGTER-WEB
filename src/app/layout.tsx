@@ -30,19 +30,22 @@ export const metadata: Metadata = {
   title: "Gogter",
   applicationName: "Gogter",
   /*
-   * Square icons, not the wordmark.
+   * The mark alone, in brand red, on nothing.
    *
-   * This pointed at /gogter.png, which is 954x480 — the wide G-and-heart
-   * lockup. Every favicon slot is square, so the browser squashed a 2:1
-   * image into 1:1 and the mark came out visibly stretched.
+   * This pointed at /gogter.png, the 954x480 lockup. A favicon slot is
+   * square, so the browser squashed 2:1 into 1:1 and the mark rendered
+   * stretched. Padding it into a square fixed the proportions but left
+   * it filling barely 40% of the height on a pale slab, which read as a
+   * short, flat panel next to the rounded icons other tabs carry.
    *
-   * Padding it into a square was not enough either: the mark is 2:1, so
-   * it filled barely 40% of the height and sat in a pale band that read
-   * as a short, flat logo rather than an icon. So the tile carries the
-   * shape instead — solid brand red, rounded like every other icon on a
-   * tab strip, with the mark in white across the middle. The tile fills
-   * the slot, which is what stops it looking short, and white on red
-   * holds up at 16px where the red-on-cream version muddied.
+   * So: no background at all. The mark is drawn at 96% of the width on a
+   * transparent canvas, which is as large as a 2:1 shape goes in a square
+   * without cropping, and the red sits on whatever the browser's tab
+   * strip happens to be — checked against both a light and a dark one.
+   *
+   * apple-icon is the exception. iOS composites a home-screen icon onto
+   * black rather than honouring transparency, so that one keeps a solid
+   * white background to leave the mark red rather than inverted.
    */
   icons: {
     icon: [
