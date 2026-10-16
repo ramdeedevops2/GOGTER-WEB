@@ -54,9 +54,9 @@ export async function loadLegalPage(slug: LegalSlug): Promise<LegalContent> {
       `${url}/rest/v1/legal_pages?slug=eq.${slug}&select=title,body,effective_on&limit=1`,
       {
         headers: { apikey: key, Authorization: `Bearer ${key}` },
-        // Matches the page's own revalidate: an edit in the admin appears
-        // within the hour without a deploy.
-        next: { revalidate: 3600 },
+        // Legal edits must be visible on the next request, including SQL
+        // updates made outside the admin app. Do not cache this document.
+        cache: "no-store",
       }
     );
 

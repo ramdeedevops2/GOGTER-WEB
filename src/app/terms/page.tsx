@@ -14,12 +14,10 @@ export const metadata: Metadata = {
 };
 
 /*
- * Re-rendered at most once an hour. Fully static would mean an edit in the
- * admin needing a deploy to appear, which defeats the point of keeping the
- * text in the database; fully dynamic would put a database call between a
- * reviewer and the page.
+ * Read the current published document on every request so admin and SQL
+ * updates appear without waiting for a cached copy to expire.
  */
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function TermsPage() {
   const content = await loadLegalPage("terms");
